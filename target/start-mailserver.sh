@@ -215,15 +215,17 @@ else
 fi
 
 #
-# Override Postfix configuration: master.cf
+# Override Postfix configuration: postconf
 #
-if [ -f /tmp/docker-mailserver/postfix-master.cf ]; then
+if [ -f /tmp/docker-mailserver/postfix-postconf.cf ]; then
   while read line; do
-    postconf -M "$line"
-  done < /tmp/docker-mailserver/postfix-master.cf
-  echo "Loaded 'config/postfix-master.cf'"
+    if [[ $line == postconf* ]]; then
+      postconf ${line:9}
+    fi
+  done < /tmp/docker-mailserver/postfix-postconf.cf
+  echo "Loaded 'config/postfix-postconf.cf'"
 else
-  echo "No extra postfix settings loaded because optional '/tmp/docker-mailserver/postfix-master.cf' not provided."
+  echo "No extra postfix settings loaded because optional '/tmp/docker-mailserver/postfix-postconf.cf' not provided."
 fi
 
 # Support general SASL password
